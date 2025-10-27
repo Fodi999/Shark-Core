@@ -1,8 +1,8 @@
 [package]
 name = "predict"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
-description = "Minimal local inference crate used in the Shark-Core workspace"
+description = "Self-evolving local reasoning core for macOS (Shark-Core v0.2)"
 authors = ["Fodi999 <noreply@localhost>"]
 license = "MIT OR Apache-2.0"
 homepage = "https://github.com/Fodi999/Shark-Core"
@@ -14,6 +14,8 @@ chrono = { version = "0.4", features = ["alloc"] }
 rayon = "1.11"
 serde = { version = "1", features = ["derive"] }
 bincode = "1"
+regex = "1"
+meval = "0.2"
 
 [dev-dependencies]
 rayon = "1.7"
