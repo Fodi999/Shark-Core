@@ -197,3 +197,25 @@ pub fn append_knowledge(path: &str, question: &str, answer: &str) -> std::io::Re
     writeln!(f, "\"{}\",\"{}\"", question.replace("\n", " "), answer.replace("\n", " "))?;
     Ok(())
 }
+
+/// Load Rust source knowledge CSV (file,description) into memory.
+pub fn load_rust_knowledge(path: &str) -> Vec<(String, String)> {
+    let file = File::open(path).ok();
+    let reader = file.map(BufReader::new);
+    let mut result = Vec::new();
+
+    if let Some(r) = reader {
+        for line in r.lines().skip(1) {
+            if let Ok(l) = line {
+                let parts: Vec<&str> = l.split(',').collect();
+                if parts.len() == 2 {
+                    result.push((
+                        parts[0].trim_matches('"').to_string(),
+                        parts[1].trim_matches('"').to_string(),
+                    ));
+                }
+            }
+        }
+    }
+    result
+}

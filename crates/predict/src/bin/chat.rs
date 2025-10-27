@@ -1,6 +1,6 @@
 use std::io::{self, BufRead, Write};
 use predict::AI;
-use predict::train::{train_from_csv, find_answer, eval_arith, solve_linear_equation, append_knowledge};
+use predict::train::{train_from_csv, find_answer, eval_arith, solve_linear_equation, append_knowledge, load_rust_knowledge};
 
 fn main() {
     // If a prompt is provided on the command line, run a single-shot chat and exit.
@@ -14,6 +14,16 @@ fn main() {
 
     if !args.is_empty() {
         let prompt = args.join(" ");
+        // Load Rust self-knowledge and handle structure/code queries
+        let rust_knowledge = load_rust_knowledge("crates/predict/data/knowledge_rust.csv");
+        if prompt.contains("структура") || prompt.contains("код") {
+            println!("🧩 Shark-Core состоит из следующих модулей:");
+            for (file, desc) in rust_knowledge {
+                println!("• {} — {}", file, desc);
+            }
+            return;
+        }
+
         // Check knowledge base first
         if let Some(answer) = find_answer("crates/predict/data/knowledge.csv", &prompt) {
             println!("> {}", prompt);
@@ -63,6 +73,16 @@ fn main() {
                     println!("Bye");
                     break;
                 }
+                // Load Rust self-knowledge and handle structure/code queries
+                let rust_knowledge = load_rust_knowledge("crates/predict/data/knowledge_rust.csv");
+                if s.contains("структура") || s.contains("код") {
+                    println!("🧩 Shark-Core состоит из следующих модулей:");
+                    for (file, desc) in rust_knowledge {
+                        println!("• {} — {}", file, desc);
+                    }
+                    continue;
+                }
+
                 // Check knowledge base first
                 if let Some(answer) = find_answer("crates/predict/data/knowledge.csv", s) {
                     println!("🧠 Из знаний: {}", answer);
