@@ -24,6 +24,26 @@ cargo build -p predict
 cargo run -p predict --bin chat
 ```
 
+Build & Run
+
+To run a single-shot prompt from the terminal (non-interactive):
+
+```bash
+cargo run -p predict --bin chat -- "Hello Shark-Core!"
+```
+
+To build an optimized macOS binary for release:
+
+```bash
+cargo build --release -p predict --bin chat
+# resulting binary: target/release/chat
+```
+
+If you want to publish a binary release on GitHub, build the release
+binary locally and upload the resulting `target/release/chat` to a
+GitHub release (or use the `gh` CLI: `gh release create v0.1.0 target/release/chat`).
+
+
 Files of interest:
 - `crates/predict/src/core.rs` — softmax, RNG, arena
 - `crates/predict/src/linear.rs` — tiny dense layer
