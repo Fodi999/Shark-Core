@@ -1,0 +1,19 @@
+[package]
+name = "predict"
+version = "0.1.0"
+edition = "2021"
+description = "Minimal local inference crate used in the Shark-Core workspace"
+authors = ["Fodi999 <noreply@localhost>"]
+license = "MIT OR Apache-2.0"
+homepage = "https://github.com/Fodi999/Shark-Core"
+
+[dependencies]
+rand = { version = "0.8", features = ["std"] }
+rand_chacha = "0.3"
+chrono = { version = "0.4", features = ["alloc"] }
+rayon = "1.11"
+serde = { version = "1", features = ["derive"] }
+bincode = "1"
+
+[dev-dependencies]
+rayon = "1.7"

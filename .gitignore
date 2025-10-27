@@ -1,0 +1,5 @@
+ /target
+/weights/*.bin
+memory.db
+*.log
+*.DS_Store

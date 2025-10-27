@@ -1,0 +1,7 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/backtest",
+    "crates/indicators",
+    "crates/predict",
+]

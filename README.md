@@ -1,16 +1,36 @@
-Verified Core — minimal scaffold
+Shark-Core
 
-This workspace is a starting point for a verified, deterministic trading core.
+Shark-Core is a minimal local inference playground built in Rust. It's
+designed to be small, auditable, and deterministic — suitable for
+experiments where clarity and safety matter.
 
-Structure (scaffolded):
-- crates/indicators  — pure indicator implementations (SMA/EMA...) with tests
-- crates/backtest    — deterministic backtest engine with fees/slippage and reports
-- docs/              — verification and safety docs
+Key points
+- Language: Rust (no unsafe code)
+- Purpose: tiny, transparent inference building blocks — small dense
+	layers, a toy two-layer model loader, deterministic RNGs, and local
+	dialog memory.
+- Features implemented:
+	- softmax & sampling utilities
+	- small `Linear` dense layer and `SimpleModel` loader (f32 blobs)
+	- local `Memory` persistence (bincode) for dialog history
+	- `chat` CLI (interactive REPL)
 
-Policies applied in crates: `#![forbid(unsafe_code)]` and denies for unwrap/expect/panic/indexing.
+Quickstart
 
-Next steps:
-- implement more indicators
-- add data ingestion and feature store crates
-- implement engine + api crates
-# Shark-Core
+Build and run the chat REPL:
+
+```bash
+cargo build -p predict
+cargo run -p predict --bin chat
+```
+
+Files of interest:
+- `crates/predict/src/core.rs` — softmax, RNG, arena
+- `crates/predict/src/linear.rs` — tiny dense layer
+- `crates/predict/src/model.rs` — SimpleModel loader + Model
+- `crates/predict/src/memory.rs` — dialog persistence
+- `crates/predict/src/bin/chat.rs` — interactive CLI
+
+License & contribution
+
+Small, experimental code. Keep changes minimal and well-tested.
