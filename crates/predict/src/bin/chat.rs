@@ -1,6 +1,6 @@
 use std::io::{self, BufRead, Write};
 use predict::AI;
-use predict::train::train_from_csv;
+use predict::train::{train_from_csv, find_answer};
 
 fn main() {
     // If a prompt is provided on the command line, run a single-shot chat and exit.
@@ -14,6 +14,12 @@ fn main() {
 
     if !args.is_empty() {
         let prompt = args.join(" ");
+        // Check knowledge base first
+        if let Some(answer) = find_answer("crates/predict/data/knowledge.csv", &prompt) {
+            println!("> {}", prompt);
+            println!("🧠 Из знаний: {}", answer);
+            return;
+        }
         // single-shot: use ai.chat which already uses memory internally
         let resp = ai.chat(&prompt);
         println!("> {}", prompt);
@@ -35,6 +41,11 @@ fn main() {
                 if s.eq_ignore_ascii_case("quit") || s.eq_ignore_ascii_case("exit") {
                     println!("Bye");
                     break;
+                }
+                // Check knowledge base first
+                if let Some(answer) = find_answer("crates/predict/data/knowledge.csv", s) {
+                    println!("🧠 Из знаний: {}", answer);
+                    continue;
                 }
                 // call AI (this persists to memory inside)
                 let resp = ai.chat(s);

@@ -20,3 +20,23 @@ pub fn train_from_csv(path: &str) {
     }
     println!("[train] dataset ready.");
 }
+
+/// Find an exact answer for `question` in a CSV of input,output pairs.
+/// Returns `Some(output)` if a matching input row is found.
+pub fn find_answer(path: &str, question: &str) -> Option<String> {
+    let file = File::open(path).ok()?;
+    let reader = BufReader::new(file);
+
+    for line in reader.lines().skip(1) {
+        if let Ok(l) = line {
+            let parts: Vec<&str> = l.split(',').collect();
+            if parts.len() != 2 { continue; }
+            let input = parts[0].trim_matches('"');
+            let output = parts[1].trim_matches('"');
+            if input == question {
+                return Some(output.to_string());
+            }
+        }
+    }
+    None
+}
