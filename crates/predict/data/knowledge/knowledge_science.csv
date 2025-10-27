@@ -1,0 +1,3 @@
+id,formula,mse,curiosity,date,notes,source
+# NOTE: This file is mirrored from ../knowledge_science.csv; new discoveries may be appended here by scientist routines.
+# Example: 1,(x^2 + 1),0.012,0.987,2025-10-27,Initial discovery,scientist

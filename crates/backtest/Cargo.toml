@@ -1,0 +1,11 @@
+[package]
+name = "backtest"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+indicators = { path = "../indicators" }
+
+[lib]
+name = "backtest"
+path = "src/lib.rs"

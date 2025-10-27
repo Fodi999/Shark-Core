@@ -1,0 +1,3 @@
+id,title,content,author,date,source,notes
+# Local discoveries, notes, and Reasoner outputs. Small human-readable entries are recommended.
+# Example: 1,Reasoner example,x^2 - 4 from (x+2)*(x-2),reasoner,2025-10-27,reasoner,auto

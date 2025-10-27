@@ -137,6 +137,14 @@ pub mod model;
 pub mod linear;
 /// Training helpers (tiny demo loader)
 pub mod train;
+/// Reasoner: stepwise explanation and reasoning logs.
+pub mod reasoner;
+/// Self-repair utilities: scan missing/broken modules and restore minimal stubs.
+pub mod self_repair;
+/// Knowledge environment helpers (expand directories, merge sources)
+pub mod knowledge_env;
+/// Simple integrator for polynomials and a small query interface.
+pub mod integrator;
 /// Weight loader (file helpers).
 pub mod loader;
 /// Local tokenizer utilities.
@@ -147,6 +155,27 @@ pub mod memory;
 /// not re-exported as part of the public minimal API.
 pub mod scientist;
 mod simple_model;
+/// Conservative decoding helpers for presenting model output.
+///
+/// Contains `decode_raw` which performs a minimal, lossy transformation of
+/// raw model bytes into a human-readable string suitable for UI display.
+pub mod decode;
+pub use decode::decode_raw;
+/// Small rule-based grammar/interpretation helpers (toy diagnostic layer).
+pub mod grammar;
+pub use grammar::interpret;
+/// Contextual interpretation helpers (frequency-based word selection).
+pub mod context;
+pub use context::{interpret_contextual, load_memory_freq, save_memory_freq, update_memory_freq, interpret_contextual_with_memory};
+/// Memory frequency helpers for persistent word learning.
+pub mod memory_freq;
+pub use memory_freq::*;
+/// Reasoning helpers for query understanding and response building.
+pub mod reasoning;
+pub use reasoning::*;
+/// Semantic question understanding helpers.
+pub mod semantic_question_understanding;
+pub use semantic_question_understanding::*;
 
 use crate::model::Model;
 use crate::memory::Memory;
@@ -157,6 +186,8 @@ pub struct AI {
     pub model: Model,
     /// persistent memory for dialogs
     pub memory: Memory,
+    /// knowledge base for reasoning
+    pub knowledge: std::collections::HashMap<String, String>,
 }
 
 impl AI {
@@ -164,16 +195,40 @@ impl AI {
     pub fn new(path: &str) -> Self {
         let model = Model::load(path);
         let memory = Memory::load("memory.db");
-        Self { model, memory }
+        let knowledge = load_knowledge_for_reasoning();
+        Self { model, memory, knowledge }
     }
 
     /// Produce a response for the given input, persist dialog to memory.
     pub fn chat(&mut self, input: &str) -> String {
+        // Try reasoning first if it looks like a query
+        if detect_mode(input) != "statement" {
+            let reasoned = reason_response(input, &self.knowledge);
+            if !reasoned.contains("Не нашел") {
+                let _ = self.memory.save_dialog(input, &reasoned);
+                return reasoned;
+            }
+        }
+        // Fallback to model generation
         let context = self.memory.build_context(input);
-        let response = self.model.generate(&context);
-        self.memory.save_dialog(input, &response);
-        response
+        let response_raw = self.model.generate(&context);
+        let _ = self.memory.save_dialog(input, &response_raw);
+        response_raw
     }
+}
+
+/// Load knowledge as map for reasoning.
+pub fn load_knowledge_for_reasoning() -> std::collections::HashMap<String, String> {
+    use std::collections::HashMap;
+    let mut knowledge = HashMap::new();
+    if let Ok(content) = std::fs::read_to_string("crates/predict/data/knowledge.csv") {
+        for line in content.lines().skip(1) {
+            if let Some((q, a)) = line.split_once(',') {
+                knowledge.insert(q.trim().trim_matches('"').to_lowercase(), a.trim().trim_matches('"').to_string());
+            }
+        }
+    }
+    knowledge
 }
 
 #[cfg(test)]

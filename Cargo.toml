@@ -4,4 +4,12 @@ members = [
     "crates/backtest",
     "crates/indicators",
     "crates/predict",
+    "crates/core",
+    "crates/backends",
+    "crates/tokenize",
+    "crates/sampler",
+    "crates/memory",
+    "crates/reason",
+    "crates/server",
+    "crates/ui",
 ]
