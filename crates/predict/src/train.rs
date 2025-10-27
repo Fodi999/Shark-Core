@@ -2,7 +2,6 @@
 
 use std::fs::File;
 use std::io::{BufRead, BufReader};
-use crate::core::softmax;
 
 /// Very small "training" loader that reads a CSV of input→output pairs and prints them.
 /// This is intentionally tiny and side-effecting for demo purposes.
